@@ -1,0 +1,52 @@
+#include "oatpp/network/Server.hpp"
+#include "oatpp/network/tcp/server/ConnectionProvider.hpp"
+#include "oatpp/web/server/HttpConnectionHandler.hpp"
+#include "oatpp/web/server/api/ApiController.hpp"
+#include "oatpp/parser/json/mapping/ObjectMapper.hpp"
+#include "oatpp/core/macro/component.hpp"
+#include "oatpp/core/macro/codegen.hpp"
+
+#include OATPP_CODEGEN_BEGIN(ApiController)
+
+class HelloController : public oatpp::web::server::api::ApiController {
+public:
+  HelloController(OATPP_COMPONENT(std::shared_ptr<oatpp::parser::json::mapping::ObjectMapper>, objectMapper))
+    : ApiController(objectMapper) {}
+
+  ENDPOINT("GET", "/hello", hello) {
+    auto res = oatpp::Fields<oatpp::String>::createShared();
+    res["message"] = "Hello Intern";
+    return createDtoResponse(Status::CODE_200, res);
+  }
+};
+
+#include OATPP_CODEGEN_END(ApiController)
+
+int main() {
+  oatpp::base::Environment::init();
+
+  // Connection provider
+  auto connectionProvider =
+    oatpp::network::tcp::server::ConnectionProvider::createShared({"0.0.0.0", 8000});
+
+  // Router
+  auto router = oatpp::web::server::HttpRouter::createShared();
+
+  // Object mapper
+  auto objectMapper =
+    oatpp::parser::json::mapping::ObjectMapper::createShared();
+
+  // Controller
+  auto controller = std::make_shared<HelloController>(objectMapper);
+  router->addController(controller);
+
+  // Connection handler
+  auto connectionHandler =
+    oatpp::web::server::HttpConnectionHandler::createShared(router);
+
+  // Server
+  oatpp::network::Server server(connectionProvider, connectionHandler);
+  server.run();
+
+  oatpp::base::Environment::destroy();
+}

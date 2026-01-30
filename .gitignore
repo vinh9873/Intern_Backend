@@ -1,0 +1,17 @@
+# Build folders
+build/
+Debug/
+Release/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+
+# Visual Studio
+.vs/
+*.vcxproj*
+*.sln
+
+# OS
+Thumbs.db

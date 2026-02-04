@@ -57,11 +57,36 @@ public:
   //POST /sub
   ENDPOINT("POST", "/sub", sub, BODY_DTO(oatpp::Object<SumRequestDto>, body)) {
 
-  auto response = SumResponseDto::createShared();
-  response->result = body->a - body->b;
+   auto response = SumResponseDto::createShared();
+   response->result = body->a - body->b;
 
-  return createDtoResponse(Status::CODE_200, response);
+   return createDtoResponse(Status::CODE_200, response);
+  }
 
+  //POST /mul
+  ENDPOINT("POST", "/mul", mul, BODY_DTO(oatpp::Object<SumRequestDto>, body)) {
+  
+   auto response = SumResponseDto::createShared();
+   response->result = body->a * body->b;
+
+   return createDtoResponse(Status::CODE_200, response);
+  }
+
+  //POST /div
+  ENDPOINT("POST", "/div", div, BODY_DTO(oatpp::Object<SumRequestDto>, body)) {
+    
+    if(body->b == 0){
+
+      auto error = oatpp:: Fields<oatpp::String>::createShared();
+      error["error"] = "Division by zero is not allowed";
+
+      return createDtoResponse(Status::CODE_400, error);
+
+    }
+    auto response = SumResponseDto::createShared();
+    response->result = body->a / body->b;
+
+    return createDtoResponse(Status::CODE_200, response);
   }
 
 };

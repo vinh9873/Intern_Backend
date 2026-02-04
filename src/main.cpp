@@ -46,12 +46,22 @@ public:
   }
 
   //POST /sum
-  ENDPOINT("POST", "/sum", sum, BODY_DTO(oatpp::Object<SumRequestDto>, body)){
+  ENDPOINT("POST", "/sum", sum, BODY_DTO(oatpp::Object<SumRequestDto>, body)) {
   
    auto response = SumResponseDto::createShared();
    response->result = body->a + body->b;
 
    return createDtoResponse(Status::CODE_200, response);
+  }
+
+  //POST /sub
+  ENDPOINT("POST", "/sub", sub, BODY_DTO(oatpp::Object<SumRequestDto>, body)) {
+
+  auto response = SumResponseDto::createShared();
+  response->result = body->a - body->b;
+
+  return createDtoResponse(Status::CODE_200, response);
+
   }
 
 };

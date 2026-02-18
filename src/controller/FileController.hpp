@@ -19,10 +19,15 @@ public:
     , m_fileService(fileService)
   {}
 
-  ENDPOINT("PUT", "/files/upload", upload,
+  ENDPOINT("POST", "/files/upload", upload,
            REQUEST(std::shared_ptr<oatpp::web::protocol::http::incoming::Request>, request)) {
     auto content = request->readBodyToString();
-    return createResponse(Status::CODE_200, content);
+    auto response = FileUploadResponseDto::createShared();
+    response->filename = "";
+    response->contentType = request->getHeaders().get("Content-Type");
+    response->size = content->length();
+    response->content = content;
+    return createDtoResponse(Status::CODE_200, response);
   }
 };
 

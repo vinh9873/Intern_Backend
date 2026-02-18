@@ -1,122 +1,29 @@
+#include <iostream>
 #include "oatpp/network/Server.hpp"
 #include "oatpp/network/tcp/server/ConnectionProvider.hpp"
 #include "oatpp/web/server/HttpConnectionHandler.hpp"
-#include "oatpp/web/server/api/ApiController.hpp"
 #include "oatpp/parser/json/mapping/ObjectMapper.hpp"
-#include "oatpp/core/macro/component.hpp"
-#include "oatpp/core/macro/codegen.hpp"
-
-#include OATPP_CODEGEN_BEGIN(DTO)
-
-/* ========= DTO ========= */
-
-//Request DTO
-class SumRequestDto : public oatpp::DTO {
-
-  DTO_INIT(SumRequestDto, DTO)
-
-  DTO_FIELD(Int32, a);
-  DTO_FIELD(Int32, b);
-
-};
-
-//Response DTO
-class SumResponseDto : public oatpp::DTO {
-
-  DTO_INIT(SumResponseDto, DTO);
-
-  DTO_FIELD(Int32, result);
-
-};
-
-#include OATPP_CODEGEN_END(DTO)
-
-#include OATPP_CODEGEN_BEGIN(ApiController)
-
-class HelloController : public oatpp::web::server::api::ApiController {
-public:
-  HelloController(OATPP_COMPONENT(std::shared_ptr<oatpp::parser::json::mapping::ObjectMapper>, objectMapper))
-    : ApiController(objectMapper) {}
-
-  // GET /hello
-  ENDPOINT("GET", "/hello", hello) {
-    auto res = oatpp::Fields<oatpp::String>::createShared();
-    res["message"] = "Hello Intern";
-    return createDtoResponse(Status::CODE_200, res);
-  }
-
-  //POST /sum
-  ENDPOINT("POST", "/sum", sum, BODY_DTO(oatpp::Object<SumRequestDto>, body)) {
-  
-   auto response = SumResponseDto::createShared();
-   response->result = body->a + body->b;
-
-   return createDtoResponse(Status::CODE_200, response);
-  }
-
-  //POST /sub
-  ENDPOINT("POST", "/sub", sub, BODY_DTO(oatpp::Object<SumRequestDto>, body)) {
-
-   auto response = SumResponseDto::createShared();
-   response->result = body->a - body->b;
-
-   return createDtoResponse(Status::CODE_200, response);
-  }
-
-  //POST /mul
-  ENDPOINT("POST", "/mul", mul, BODY_DTO(oatpp::Object<SumRequestDto>, body)) {
-  
-   auto response = SumResponseDto::createShared();
-   response->result = body->a * body->b;
-
-   return createDtoResponse(Status::CODE_200, response);
-  }
-
-  //POST /div
-  ENDPOINT("POST", "/div", div, BODY_DTO(oatpp::Object<SumRequestDto>, body)) {
-    
-    if(body->b == 0){
-
-      auto error = oatpp:: Fields<oatpp::String>::createShared();
-      error["error"] = "Division by zero is not allowed";
-
-      return createDtoResponse(Status::CODE_400, error);
-
-    }
-    auto response = SumResponseDto::createShared();
-    response->result = body->a / body->b;
-
-    return createDtoResponse(Status::CODE_200, response);
-  }
-
-};
-
-#include OATPP_CODEGEN_END(ApiController)
+#include "HelloController.hpp"
 
 int main() {
+
   oatpp::base::Environment::init();
 
-  // Connection provider
   auto connectionProvider =
-    oatpp::network::tcp::server::ConnectionProvider::createShared({"0.0.0.0", 8000});
+    oatpp::network::tcp::server::ConnectionProvider::createShared({"127.0.0.1", 8080});
 
-  // Router
   auto router = oatpp::web::server::HttpRouter::createShared();
+  auto objectMapper = oatpp::parser::json::mapping::ObjectMapper::createShared();
 
-  // Object mapper
-  auto objectMapper =
-    oatpp::parser::json::mapping::ObjectMapper::createShared();
-
-  // Controller
   auto controller = std::make_shared<HelloController>(objectMapper);
   router->addController(controller);
 
-  // Connection handler
   auto connectionHandler =
     oatpp::web::server::HttpConnectionHandler::createShared(router);
 
-  // Server
   oatpp::network::Server server(connectionProvider, connectionHandler);
+
+  std::cout << "Server started at http://127.0.0.1:8080\n";
   server.run();
 
   oatpp::base::Environment::destroy();

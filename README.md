@@ -42,3 +42,10 @@ Response:
   "message": "Hello Intern"
 }
 ```
+
+```bash
+curl "http://localhost:8080/sum" --data-raw "{\"a\":1, \"b\":2}"
+```
+
+# Dependency system
+vcpkg: install, lookup dependency

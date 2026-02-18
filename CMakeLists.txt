@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(oatpp CONFIG REQUIRED)
 
+include_directories(src)
+
 add_executable(file-service
     src/main.cpp
 )

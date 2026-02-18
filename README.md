@@ -47,5 +47,11 @@ Response:
 curl "http://localhost:8080/sum" --data-raw "{\"a\":1, \"b\":2}"
 ```
 
+upload file:
+
+``` bash
+curl -X POST --data-binary @README.md http://127.0.0.1:8080/files/upload
+```
+
 # Dependency system
 vcpkg: install, lookup dependency

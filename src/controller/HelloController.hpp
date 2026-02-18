@@ -2,7 +2,7 @@
 
 #include "oatpp/core/macro/codegen.hpp"
 #include "oatpp/web/server/api/ApiController.hpp"
-#include "dto.hpp"
+#include "dto/SumRequestDto.hpp"
 
 #include OATPP_CODEGEN_BEGIN(ApiController)
 

@@ -3,7 +3,7 @@
 #include "oatpp/network/tcp/server/ConnectionProvider.hpp"
 #include "oatpp/web/server/HttpConnectionHandler.hpp"
 #include "oatpp/parser/json/mapping/ObjectMapper.hpp"
-#include "HelloController.hpp"
+#include "controller/HelloController.hpp"
 
 int main() {
 

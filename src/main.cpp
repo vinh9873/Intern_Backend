@@ -4,6 +4,7 @@
 #include "oatpp/web/server/HttpConnectionHandler.hpp"
 #include "oatpp/parser/json/mapping/ObjectMapper.hpp"
 #include "controller/HelloController.hpp"
+#include "controller/FileController.hpp"
 
 int main() {
 
@@ -15,8 +16,12 @@ int main() {
   auto router = oatpp::web::server::HttpRouter::createShared();
   auto objectMapper = oatpp::parser::json::mapping::ObjectMapper::createShared();
 
-  auto controller = std::make_shared<HelloController>(objectMapper);
-  router->addController(controller);
+  auto helloController = std::make_shared<HelloController>(objectMapper);
+  router->addController(helloController);
+
+  auto fileController = std::make_shared<FileController>(objectMapper);
+  router->addController(fileController);
+
 
   auto connectionHandler =
     oatpp::web::server::HttpConnectionHandler::createShared(router);

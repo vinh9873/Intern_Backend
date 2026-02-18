@@ -19,8 +19,15 @@ int main() {
   auto helloController = std::make_shared<HelloController>(objectMapper);
   router->addController(helloController);
 
-  auto fileController = std::make_shared<FileController>(objectMapper);
-  router->addController(fileController);
+  auto fileService = std::make_shared<FileService>();
+
+  auto fileController = std::make_shared<FileController>(
+    objectMapper,
+    fileService
+);
+
+router->addController(fileController);
+
 
 
   auto connectionHandler =
